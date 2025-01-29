@@ -51,8 +51,9 @@ jobs:
         mkdir -p /usr/local/bin
         cp /usr/bin/makepkg /usr/local/bin
 
-        chmod +x ./llvm-minimal.sh
+        chmod +x ./*.sh
         ./llvm-minimal.sh
+        ./llvm-very-minimal.sh
         mkdir ./dist
         mv ./llvm-libs-*.pkg.tar.zst ./dist
 
