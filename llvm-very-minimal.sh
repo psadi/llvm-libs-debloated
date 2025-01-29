@@ -15,7 +15,8 @@ sed -i -e 's/-g1/-g0/' \
 cat ./PKGBUILD
 
 makepkg -f --skippgpcheck
-mv ./llvm-libs-*.pkg.tar.zst ../
+mv ./llvm-libs-*.pkg.tar.zst ../llvm-libs-very-minimal.pkg.tar.zst
 cd ..
+rm -rf ./llvm
 echo "All done!"
 
