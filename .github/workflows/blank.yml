@@ -40,7 +40,7 @@ jobs:
           -e 's|DEBUG_CFLAGS="-g"|DEBUG_CFLAGS="-g0"|' \
           -e 's|-fno-omit-frame-pointer|-fomit-frame-pointer|' \
           -e 's|-mno-omit-leaf-frame-pointer||' \
-          -e 's|Wp,-D_FORTIFY_SOURCE=3||' \
+          -e 's|-Wp,-D_FORTIFY_SOURCE=3||' \
           -e 's|-fstack-clash-protection||' \
           -e 's|MAKEFLAGS=.*|MAKEFLAGS="-j$(nproc)"|' \
           -e 's|#MAKEFLAGS|MAKEFLAGS|' /etc/makepkg.conf
