@@ -16,5 +16,6 @@ cat ./PKGBUILD
 makepkg -f --skippgpcheck
 mv ./llvm-libs-*.pkg.tar.zst ../llvm-libs-minimal.pkg.tar.zst
 cd ..
+rm -rf ./llvm
 echo "All done!"
 
