@@ -4,6 +4,21 @@ set -e
 
 ARCH="$(uname -m)"
 
+case "${ARCH}" in
+"x86_64")
+	TARGETS_TO_BUILD="X86;AMDGPU"
+	EXT="zst"
+	;;
+"aarch64")
+	TARGETS_TO_BUILD="AArch64;AMDGPU"
+	EXT="xz"
+	;;
+*)
+	echo -e "Unsupported Arch: '${ARCH}'"
+	exit 1
+	;;
+esac
+
 git clone https://gitlab.archlinux.org/archlinux/packaging/packages/llvm llvm
 cd ./llvm
 
@@ -18,7 +33,7 @@ cat ./PKGBUILD
 
 makepkg -f --skippgpcheck
 ls -la
-mv ./llvm-libs-*.pkg.tar.zst ../llvm-libs-minimal.pkg.tar.zst
+mv ./llvm-libs-*.pkg.tar.${EXT} ../llvm-libs-minimal.pkg.tar.${EXT}
 cd ..
 rm -rf ./llvm
 echo "All done!"

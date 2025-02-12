@@ -82,7 +82,7 @@ jobs:
           chmod +x ./*.sh
           sh ${{ matrix.script }}
           mkdir ./dist
-          mv ./llvm-libs-*.pkg.tar.zst ./dist
+          mv ./llvm-libs-*.pkg.tar.* ./dist
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4

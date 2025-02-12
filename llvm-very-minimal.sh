@@ -33,7 +33,7 @@ cat ./PKGBUILD
 
 makepkg -f --skippgpcheck
 ls -la
-mv ./llvm-libs-*.pkg.tar.zst ../llvm-libs-very-minimal.pkg.tar.zst
+mv ./llvm-libs-*.pkg.tar.${EXT} ../llvm-libs-minimal.pkg.tar.${EXT}
 cd ..
 rm -rf ./llvm
 echo "All done!"
