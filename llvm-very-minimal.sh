@@ -7,9 +7,11 @@ export ARCH="$(uname -m)"
 case "${ARCH}" in
 "x86_64")
 	TARGETS_TO_BUILD="X86;AMDGPU"
+	EXT="zst"
 	;;
 "aarch64")
 	TARGETS_TO_BUILD="AArch64;AMDGPU"
+	EXT="xz"
 	;;
 *)
 	echo -e "Unsupported Arch: '${ARCH}'"
