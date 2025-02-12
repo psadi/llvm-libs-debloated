@@ -89,14 +89,3 @@ jobs:
         with:
           name: ${{ format('{0}-{1}', matrix.script, matrix.arch) }}
           path: "dist"
-
-      - name: release
-        uses: marvinpinto/action-automatic-releases@latest
-        with:
-          title: Continuous build
-          automatic_release_tag: continuous
-          prerelease: false
-          draft: false
-          files: |
-            dist/*.pkg.tar.zst
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
