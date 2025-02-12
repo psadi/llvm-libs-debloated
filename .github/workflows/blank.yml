@@ -6,80 +6,88 @@ concurrency:
 on:
   schedule:
     - cron: "0 7 1/14 * *"
-  workflow_dispatch:
+  workflow_dispatch: {}
+  pull_request:
+    types: [opened, synchronize, reopened]
 
 jobs:
   build:
-    runs-on: ubuntu-latest
-    container: artixlinux/artixlinux:latest
+    permissions:
+      actions: read
+      security-events: write
+      contents: write
+    runs-on: ${{ matrix.runs-on }}
+    strategy:
+      matrix:
+        include:
+          # - arch: aarch64
+          #   platform: linux/arm64
+          #   runs-on: ubuntu-24.04-arm
+          - arch: x86_64
+            platform: linux/amd64
+            runs-on: ubuntu-24.04
+    container:
+      image: ghcr.io/pkgforge-dev/archlinux:latest
     steps:
-    - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
 
-    - name: build
-      run: |
-        sed -i 's/DownloadUser/#DownloadUser/g' /etc/pacman.conf
-        pacman -Syu --noconfirm base-devel strace patchelf curl wget \
-          desktop-file-utils git artix-archlinux-support
-        pacman-key --init && pacman-key --populate archlinux
-        printf "\n[extra]\nInclude = /etc/pacman.d/mirrorlist-arch\n" | tee -a /etc/pacman.conf
-        pacman -Syu --noconfirm \
-          cmake \
-          ninja \
-          zlib \
-          zstd \
-          curl \
-          libffi \
-          libedit \
-          libxml2 \
-          python-setuptools \
-          python-psutil \
-          python-sphinx \
-          python-myst-parser
+      - name: build
+        run: |
+          sed -i 's/DownloadUser/#DownloadUser/g' /etc/pacman.conf
+          pacman -Syu --noconfirm base-devel strace patchelf curl wget \
+            desktop-file-utils git artix-archlinux-support
+          pacman-key --init && pacman-key --populate archlinux
+          printf "\n[extra]\nInclude = /etc/pacman.d/mirrorlist-arch\n" | tee -a /etc/pacman.conf
+          pacman -Syu --noconfirm \
+            cmake \
+            ninja \
+            zlib \
+            zstd \
+            curl \
+            libffi \
+            libedit \
+            libxml2 \
+            python-setuptools \
+            python-psutil \
+            python-sphinx \
+            python-myst-parser
 
-        sudo sed -i -e 's|-O2|-Os|' \
-          -e 's|DEBUG_CFLAGS="-g"|DEBUG_CFLAGS="-g0"|' \
-          -e 's|-fno-omit-frame-pointer|-fomit-frame-pointer|' \
-          -e 's|-mno-omit-leaf-frame-pointer||' \
-          -e 's|-Wp,-D_FORTIFY_SOURCE=3||' \
-          -e 's|-fstack-clash-protection||' \
-          -e 's|MAKEFLAGS=.*|MAKEFLAGS="-j$(nproc)"|' \
-          -e 's|#MAKEFLAGS|MAKEFLAGS|' /etc/makepkg.conf
-        cat /etc/makepkg.conf
+          sudo sed -i -e 's|-O2|-Os|' \
+            -e 's|DEBUG_CFLAGS="-g"|DEBUG_CFLAGS="-g0"|' \
+            -e 's|-fno-omit-frame-pointer|-fomit-frame-pointer|' \
+            -e 's|-mno-omit-leaf-frame-pointer||' \
+            -e 's|-Wp,-D_FORTIFY_SOURCE=3||' \
+            -e 's|-fstack-clash-protection||' \
+            -e 's|MAKEFLAGS=.*|MAKEFLAGS="-j$(nproc)"|' \
+            -e 's|#MAKEFLAGS|MAKEFLAGS|' /etc/makepkg.conf
+          cat /etc/makepkg.conf
 
-        echo "Hacking makepkg to allow building as root in the container..."
-        sudo sed -i 's|EUID == 0|EUID == 69|g' /usr/bin/makepkg
-        mkdir -p /usr/local/bin
-        cp /usr/bin/makepkg /usr/local/bin
+          echo "Hacking makepkg to allow building as root in the container..."
+          sudo sed -i 's|EUID == 0|EUID == 69|g' /usr/bin/makepkg
+          mkdir -p /usr/local/bin
+          cp /usr/bin/makepkg /usr/local/bin
 
-        chmod +x ./*.sh
-        ./llvm-minimal.sh
-        ./llvm-very-minimal.sh
-        mkdir ./dist
-        mv ./llvm-libs-*.pkg.tar.zst ./dist
+          chmod +x ./*.sh
+          ./llvm-minimal.sh
+          ./llvm-very-minimal.sh
+          mkdir ./dist
+          mv ./llvm-libs-*.pkg.tar.zst ./dist
 
-    - name: Upload artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: llvm-libs
-        path: 'dist'
-        
-  release:
-      needs: [build]
-      permissions: write-all
-      runs-on: ubuntu-latest
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: llvm-libs
+          path: "dist"
 
-      steps:
-        - uses: actions/download-artifact@v4
-          with:
-            name: llvm-libs
-
-        - name: release
-          uses: marvinpinto/action-automatic-releases@latest
-          with:
-            title: Continuous build
-            automatic_release_tag: continuous
-            prerelease: false
-            draft: false
-            files: |
-              *.pkg.tar.zst
-            repo_token: ${{ secrets.GITHUB_TOKEN }}
+      # - name: release
+      #   uses: marvinpinto/action-automatic-releases@latest
+      #   with:
+      #     title: Continuous build
+      #     automatic_release_tag: continuous
+      #     prerelease: false
+      #     draft: false
+      #     files: |
+      #       *.pkg.tar.zst
+      #     repo_token: ${{ secrets.GITHUB_TOKEN }}

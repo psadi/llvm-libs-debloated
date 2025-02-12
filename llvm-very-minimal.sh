@@ -19,4 +19,3 @@ mv ./llvm-libs-*.pkg.tar.zst ../llvm-libs-very-minimal.pkg.tar.zst
 cd ..
 rm -rf ./llvm
 echo "All done!"
-
