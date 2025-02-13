@@ -122,4 +122,5 @@ jobs:
           draft: false
           files: |
             *.pkg.tar.zst
+            *.pkg.tar.xz
           repo_token: ${{ secrets.GITHUB_TOKEN }}
