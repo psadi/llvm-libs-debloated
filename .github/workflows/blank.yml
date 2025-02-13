@@ -23,7 +23,7 @@ jobs:
           - arch: x86_64
             platform: linux/amd64
             runs-on: ubuntu-24.04
-            script: llvm-micro
+            script: llvm-mini
           - arch: x86_64
             platform: linux/amd64
             runs-on: ubuntu-24.04
@@ -31,7 +31,7 @@ jobs:
           - arch: aarch64
             platform: linux/arm64
             runs-on: ubuntu-24.04-arm
-            script: llvm-micro
+            script: llvm-mini
           - arch: aarch64
             platform: linux/arm64
             runs-on: ubuntu-24.04-arm
@@ -99,7 +99,7 @@ jobs:
     steps:
       - uses: actions/download-artifact@v4
         with:
-          name: llvm-micro-aarch64
+          name: llvm-mini-aarch64
 
       - uses: actions/download-artifact@v4
         with:
@@ -107,7 +107,7 @@ jobs:
 
       - uses: actions/download-artifact@v4
         with:
-          name: llvm-micro-x86_64
+          name: llvm-mini-x86_64
 
       - uses: actions/download-artifact@v4
         with:
