@@ -45,41 +45,40 @@ jobs:
 
       - name: build
         run: |
-          # sed -i 's/DownloadUser/#DownloadUser/g' /etc/pacman.conf
-          # pacman -Syu --noconfirm base-devel strace patchelf curl wget \
-          #   desktop-file-utils git
-          # pacman -Syu --noconfirm \
-          #   cmake \
-          #   ninja \
-          #   zlib \
-          #   zstd \
-          #   curl \
-          #   libffi \
-          #   libedit \
-          #   libxml2 \
-          #   python-setuptools \
-          #   python-psutil \
-          #   python-sphinx \
-          #   python-myst-parser
-          #
-          # sudo sed -i -e 's|-O2|-Os|' \
-          #   -e 's|DEBUG_CFLAGS="-g"|DEBUG_CFLAGS="-g0"|' \
-          #   -e 's|-fno-omit-frame-pointer|-fomit-frame-pointer|' \
-          #   -e 's|-mno-omit-leaf-frame-pointer||' \
-          #   -e 's|-Wp,-D_FORTIFY_SOURCE=3||' \
-          #   -e 's|-fstack-clash-protection||' \
-          #   -e 's|MAKEFLAGS=.*|MAKEFLAGS="-j$(nproc)"|' \
-          #   -e 's|#MAKEFLAGS|MAKEFLAGS|' /etc/makepkg.conf
-          # cat /etc/makepkg.conf
-          #
-          # echo "Hacking makepkg to allow building as root in the container..."
-          # sudo sed -i 's|EUID == 0|EUID == 69|g' /usr/bin/makepkg
-          # mkdir -p /usr/local/bin
-          # cp /usr/bin/makepkg /usr/local/bin
-          #
-          # chmod +x ./*.sh
-          # sh ${{ matrix.script }}
-          dd if=/dev/urandom of=llvm-libs-${{ matrix.script }}-${{ matrix.arch }}.pkg.tar.zst bs=24MB count=1
+          sed -i 's/DownloadUser/#DownloadUser/g' /etc/pacman.conf
+          pacman -Syu --noconfirm base-devel strace patchelf curl wget \
+            desktop-file-utils git
+          pacman -Syu --noconfirm \
+            cmake \
+            ninja \
+            zlib \
+            zstd \
+            curl \
+            libffi \
+            libedit \
+            libxml2 \
+            python-setuptools \
+            python-psutil \
+            python-sphinx \
+            python-myst-parser
+
+          sudo sed -i -e 's|-O2|-Os|' \
+            -e 's|DEBUG_CFLAGS="-g"|DEBUG_CFLAGS="-g0"|' \
+            -e 's|-fno-omit-frame-pointer|-fomit-frame-pointer|' \
+            -e 's|-mno-omit-leaf-frame-pointer||' \
+            -e 's|-Wp,-D_FORTIFY_SOURCE=3||' \
+            -e 's|-fstack-clash-protection||' \
+            -e 's|MAKEFLAGS=.*|MAKEFLAGS="-j$(nproc)"|' \
+            -e 's|#MAKEFLAGS|MAKEFLAGS|' /etc/makepkg.conf
+          cat /etc/makepkg.conf
+
+          echo "Hacking makepkg to allow building as root in the container..."
+          sudo sed -i 's|EUID == 0|EUID == 69|g' /usr/bin/makepkg
+          mkdir -p /usr/local/bin
+          cp /usr/bin/makepkg /usr/local/bin
+
+          chmod +x ./*.sh
+          sh ${{ matrix.script }}
           mkdir ./dist
           mv ./llvm-libs-*.pkg.tar.* ./dist
 
