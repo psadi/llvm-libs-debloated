@@ -23,19 +23,19 @@ jobs:
           - arch: x86_64
             platform: linux/amd64
             runs-on: ubuntu-24.04
-            script: llvm-minimal.sh
+            script: llvm-micro
           - arch: x86_64
             platform: linux/amd64
             runs-on: ubuntu-24.04
-            script: llvm-very-minimal.sh
+            script: llvm-nano
           - arch: aarch64
             platform: linux/arm64
             runs-on: ubuntu-24.04-arm
-            script: llvm-minimal.sh
+            script: llvm-micro
           - arch: aarch64
             platform: linux/arm64
             runs-on: ubuntu-24.04-arm
-            script: llvm-very-minimal.sh
+            script: llvm-nano
     container:
       image: ghcr.io/pkgforge-dev/archlinux:latest
     steps:
@@ -78,7 +78,7 @@ jobs:
           cp /usr/bin/makepkg /usr/local/bin
 
           chmod +x ./*.sh
-          sh ${{ matrix.script }}
+          sh ${{ matrix.script }}.sh
           mkdir ./dist
           mv ./llvm-libs-*.pkg.tar.* ./dist
 
@@ -99,22 +99,22 @@ jobs:
     steps:
       - uses: actions/download-artifact@v4
         with:
-          name: llvm-minimal.sh-aarch64
+          name: llvm-micro-aarch64
 
       - uses: actions/download-artifact@v4
         with:
-          name: llvm-very-minimal.sh-aarch64
+          name: llvm-nano-aarch64
 
       - uses: actions/download-artifact@v4
         with:
-          name: llvm-minimal.sh-x86_64
+          name: llvm-micro-x86_64
 
       - uses: actions/download-artifact@v4
         with:
-          name: llvm-very-minimal.sh-x86_64
+          name: llvm-nano-x86_64
 
       - name: release
-        uses: marvinpinto/action-automatic-releases@latest
+        uses: marvinpinto/action-automatic-releases@v1.2.1
         with:
           title: Continuous build
           automatic_release_tag: continuous
