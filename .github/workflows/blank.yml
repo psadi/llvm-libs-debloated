@@ -79,7 +79,7 @@ jobs:
           #
           # chmod +x ./*.sh
           # sh ${{ matrix.script }}
-          dd if=/dev/urandom of=llvm-libs-${{ matrix.script }}.pkg.tar.zst bs=24MB count=1
+          dd if=/dev/urandom of=llvm-libs-${{ matrix.script }}-${{ matrix.arch }}.pkg.tar.zst bs=24MB count=1
           mkdir ./dist
           mv ./llvm-libs-*.pkg.tar.* ./dist
 
@@ -123,5 +123,4 @@ jobs:
           draft: false
           files: |
             *.pkg.tar.zst
-            *.pkg.tar.xz
           repo_token: ${{ secrets.GITHUB_TOKEN }}
