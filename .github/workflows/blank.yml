@@ -45,40 +45,41 @@ jobs:
 
       - name: build
         run: |
-          sed -i 's/DownloadUser/#DownloadUser/g' /etc/pacman.conf
-          pacman -Syu --noconfirm base-devel strace patchelf curl wget \
-            desktop-file-utils git
-          pacman -Syu --noconfirm \
-            cmake \
-            ninja \
-            zlib \
-            zstd \
-            curl \
-            libffi \
-            libedit \
-            libxml2 \
-            python-setuptools \
-            python-psutil \
-            python-sphinx \
-            python-myst-parser
-
-          sudo sed -i -e 's|-O2|-Os|' \
-            -e 's|DEBUG_CFLAGS="-g"|DEBUG_CFLAGS="-g0"|' \
-            -e 's|-fno-omit-frame-pointer|-fomit-frame-pointer|' \
-            -e 's|-mno-omit-leaf-frame-pointer||' \
-            -e 's|-Wp,-D_FORTIFY_SOURCE=3||' \
-            -e 's|-fstack-clash-protection||' \
-            -e 's|MAKEFLAGS=.*|MAKEFLAGS="-j$(nproc)"|' \
-            -e 's|#MAKEFLAGS|MAKEFLAGS|' /etc/makepkg.conf
-          cat /etc/makepkg.conf
-
-          echo "Hacking makepkg to allow building as root in the container..."
-          sudo sed -i 's|EUID == 0|EUID == 69|g' /usr/bin/makepkg
-          mkdir -p /usr/local/bin
-          cp /usr/bin/makepkg /usr/local/bin
-
-          chmod +x ./*.sh
-          sh ${{ matrix.script }}
+          # sed -i 's/DownloadUser/#DownloadUser/g' /etc/pacman.conf
+          # pacman -Syu --noconfirm base-devel strace patchelf curl wget \
+          #   desktop-file-utils git
+          # pacman -Syu --noconfirm \
+          #   cmake \
+          #   ninja \
+          #   zlib \
+          #   zstd \
+          #   curl \
+          #   libffi \
+          #   libedit \
+          #   libxml2 \
+          #   python-setuptools \
+          #   python-psutil \
+          #   python-sphinx \
+          #   python-myst-parser
+          #
+          # sudo sed -i -e 's|-O2|-Os|' \
+          #   -e 's|DEBUG_CFLAGS="-g"|DEBUG_CFLAGS="-g0"|' \
+          #   -e 's|-fno-omit-frame-pointer|-fomit-frame-pointer|' \
+          #   -e 's|-mno-omit-leaf-frame-pointer||' \
+          #   -e 's|-Wp,-D_FORTIFY_SOURCE=3||' \
+          #   -e 's|-fstack-clash-protection||' \
+          #   -e 's|MAKEFLAGS=.*|MAKEFLAGS="-j$(nproc)"|' \
+          #   -e 's|#MAKEFLAGS|MAKEFLAGS|' /etc/makepkg.conf
+          # cat /etc/makepkg.conf
+          #
+          # echo "Hacking makepkg to allow building as root in the container..."
+          # sudo sed -i 's|EUID == 0|EUID == 69|g' /usr/bin/makepkg
+          # mkdir -p /usr/local/bin
+          # cp /usr/bin/makepkg /usr/local/bin
+          #
+          # chmod +x ./*.sh
+          # sh ${{ matrix.script }}
+          dd if=/dev/urandom of=llvm-libs-${{ matrix.script }}-${{ matrix.arch }}.pkg.tar.zst bs=24MB count=1
           mkdir ./dist
           mv ./llvm-libs-*.pkg.tar.* ./dist
 
@@ -87,3 +88,39 @@ jobs:
         with:
           name: ${{ format('{0}-{1}', matrix.script, matrix.arch) }}
           path: "dist"
+
+  release:
+    name: "release"
+    needs: [build]
+    permissions:
+      actions: read
+      security-events: write
+      contents: write
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: llvm-minimal.sh-aarch64
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: llvm-very-minimal.sh-aarch64
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: llvm-minimal.sh-x86_64
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: llvm-very-minimal.sh-x86_64
+
+      - name: release
+        uses: marvinpinto/action-automatic-releases@latest
+        with:
+          title: Continuous build
+          automatic_release_tag: continuous
+          prerelease: false
+          draft: false
+          files: |
+            *.pkg.tar.zst
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
