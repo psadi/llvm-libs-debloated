@@ -14,7 +14,7 @@ case "${ARCH}" in
 	EXT="xz"
 	;;
 *)
-	echo -e "Unsupported Arch: '${ARCH}'"
+	echo "Unsupported Arch: '${ARCH}'"
 	exit 1
 	;;
 esac
