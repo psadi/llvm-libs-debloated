@@ -4,7 +4,16 @@ set -ex
 
 ARCH="$(uname -m)"
 
-git clone https://gitlab.archlinux.org/archlinux/packaging/packages/qt6-base qt6-base
+if [ "$ARCH" == "x86_64" ]; then
+    QT6_BASE="https://gitea.artixlinux.org/packages/qt6-base.git"
+elif [ "$ARCH" == "aarch64" ]; then
+    QT6_BASE="https://gitlab.archlinux.org/archlinux/packaging/packages/qt6-base"
+else
+    echo "Unsupported architecture: $ARCH"
+    exit 1
+fi
+
+git clone ${QT6_BASE} qt6-base
 cd ./qt6-base
 
 # remove the line that enables icu support

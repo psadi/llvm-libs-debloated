@@ -20,30 +20,30 @@ jobs:
     strategy:
       matrix:
         include:
-          - arch: x86_64
-            platform: linux/amd64
-            runs-on: ubuntu-24.04
-            script: llvm-mini
-          - arch: x86_64
-            platform: linux/amd64
-            runs-on: ubuntu-24.04
-            script: llvm-nano
-          - arch: aarch64
-            platform: linux/arm64
-            runs-on: ubuntu-24.04-arm
-            script: llvm-mini
-          - arch: aarch64
-            platform: linux/arm64
-            runs-on: ubuntu-24.04-arm
-            script: llvm-nano
-          - arch: x86_64
-            platform: linux/amd64
-            runs-on: ubuntu-24.04
-            script: iculess-libxml2
-          - arch: aarch64
-            platform: linux/arm64
-            runs-on: ubuntu-24.04-arm
-            script: iculess-libxml2
+          # - arch: x86_64
+          #   platform: linux/amd64
+          #   runs-on: ubuntu-24.04
+          #   script: llvm-mini
+          # - arch: x86_64
+          #   platform: linux/amd64
+          #   runs-on: ubuntu-24.04
+          #   script: llvm-nano
+          # - arch: aarch64
+          #   platform: linux/arm64
+          #   runs-on: ubuntu-24.04-arm
+          #   script: llvm-mini
+          # - arch: aarch64
+          #   platform: linux/arm64
+          #   runs-on: ubuntu-24.04-arm
+          #   script: llvm-nano
+          # - arch: x86_64
+          #   platform: linux/amd64
+          #   runs-on: ubuntu-24.04
+          #   script: iculess-libxml2
+          # - arch: aarch64
+          #   platform: linux/arm64
+          #   runs-on: ubuntu-24.04-arm
+          #   script: iculess-libxml2
           - arch: x86_64
             platform: linux/amd64
             runs-on: ubuntu-24.04
@@ -52,30 +52,30 @@ jobs:
             platform: linux/arm64
             runs-on: ubuntu-24.04-arm
             script: iculess-qt6base
-          - arch: x86_64
-            platform: linux/amd64
-            runs-on: ubuntu-24.04
-            script: ffmpeg-mini
-          - arch: aarch64
-            platform: linux/arm64
-            runs-on: ubuntu-24.04-arm
-            script: ffmpeg-mini
-          - arch: x86_64
-            platform: linux/amd64
-            runs-on: ubuntu-24.04
-            script: opus-nano
-          - arch: aarch64
-            platform: linux/arm64
-            runs-on: ubuntu-24.04-arm
-            script: opus-nano
-          - arch: x86_64
-            platform: linux/amd64
-            runs-on: ubuntu-24.04
-            script: mesa-mini
-          - arch: aarch64
-            platform: linux/arm64
-            runs-on: ubuntu-24.04-arm
-            script: mesa-mini
+          # - arch: x86_64
+          #   platform: linux/amd64
+          #   runs-on: ubuntu-24.04
+          #   script: ffmpeg-mini
+          # - arch: aarch64
+          #   platform: linux/arm64
+          #   runs-on: ubuntu-24.04-arm
+          #   script: ffmpeg-mini
+          # - arch: x86_64
+          #   platform: linux/amd64
+          #   runs-on: ubuntu-24.04
+          #   script: opus-nano
+          # - arch: aarch64
+          #   platform: linux/arm64
+          #   runs-on: ubuntu-24.04-arm
+          #   script: opus-nano
+          # - arch: x86_64
+          #   platform: linux/amd64
+          #   runs-on: ubuntu-24.04
+          #   script: mesa-mini
+          # - arch: aarch64
+          #   platform: linux/arm64
+          #   runs-on: ubuntu-24.04-arm
+          #   script: mesa-mini
     container:
       image: ${{ matrix.arch == 'x86_64' && 'artixlinux/artixlinux:latest' || 'ghcr.io/pkgforge-dev/archlinux:latest'}}
     steps:
