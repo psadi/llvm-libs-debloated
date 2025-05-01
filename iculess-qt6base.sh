@@ -9,22 +9,23 @@ cd ./qt6-base
 
 # remove the line that enables icu support
 sed -i -e "s/x86_64/${ARCH}/" \
-	-e 's/-DCMAKE_BUILD_TYPE=RelWithDebInfo/-DCMAKE_BUILD_TYPE=MinSizeRel/' \
-	-e 's/-DFEATURE_journald=ON/-DFEATURE_journald=OFF/' \
-	-e '/-DFEATURE_libproxy=ON \\/a\    -DFEATURE_icu=OFF \\' ./PKGBUILD
+    -e 's/-DCMAKE_BUILD_TYPE=RelWithDebInfo/-DCMAKE_BUILD_TYPE=MinSizeRel/' \
+    -e 's/-DFEATURE_journald=ON/-DFEATURE_journald=OFF/' \
+    -e '/systemd-libs/d' \
+    -e '/-DFEATURE_libproxy=ON \\/a\    -DFEATURE_icu=OFF \\' ./PKGBUILD
 
 case "${ARCH}" in
-	"x86_64")
-		EXT="zst"
-		;;
-	"aarch64")
-		EXT="xz"
-		sed -i 's/-DFEATURE_no_direct_extern_access=ON/-DQT_FEATURE_sql_ibase=OFF/' ./PKGBUILD
-		;;
-	*)
-		echo "Unsupported Arch: '${ARCH}'"
-		exit 1
-		;;
+"x86_64")
+    EXT="zst"
+    ;;
+"aarch64")
+    EXT="xz"
+    sed -i 's/-DFEATURE_no_direct_extern_access=ON/-DQT_FEATURE_sql_ibase=OFF/' ./PKGBUILD
+    ;;
+*)
+    echo "Unsupported Arch: '${ARCH}'"
+    exit 1
+    ;;
 esac
 
 cat ./PKGBUILD
